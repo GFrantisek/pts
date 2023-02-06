@@ -2,47 +2,54 @@ package pile_and_hand_managment;
 
 import cards.Card;
 import cards.CardType;
-import jdk.internal.event.DeserializationEvent;
-import player.Player;
 import position.HandPosition;
 
-import javax.swing.text.html.Option;
 import java.util.*;
 
 public class Hand {
     private List<Card> pickedCards;
     private DrawingAndTrashPile pile;
     private List<Card> handCards;
-    private Player player;
+    private final int playerIndex;
 
-    public Hand(Player player, DrawingAndTrashPile pile){
-        this.player = player;
+    public Hand(DrawingAndTrashPile pile, int playerIndex1){
+
         this.pile = pile;
+        this.playerIndex = playerIndex1;
         this.pickedCards = new ArrayList<>();
         this.handCards =  new ArrayList<>();
-        pickedCards.addAll(pile.frstDraw());
-        for (int i = 0; i < ) {
-}
-        System.out.println("HAND frst drwa "+ pickedCards);
+        handCards.addAll(pile.drawFullHandOf5Cards());
     }
 
     public Optional<List<Card>> pickCards(List<HandPosition> positions){
+        if (positions.isEmpty()) {
+            return Optional.empty();
+        }
         for(HandPosition pos : positions) pickedCards.add(handCards.get(pos.getCardIndex()));
         return Optional.of(pickedCards);
     }
 
     public Map<HandPosition,Card> removePickedCardsAndRedraw(){
-        return null;
+        Map<HandPosition, Card> toReturn = new HashMap<>();
+        handCards.removeAll(pickedCards);
+        List<Card> drawingCards = pile.discardAndDraw(pickedCards);
+        for(int i = 0; i < drawingCards.size(); i++){
+            toReturn.put(new HandPosition(i + handCards.size(), playerIndex), drawingCards.get(i));
+        }
+        handCards.addAll(drawingCards);
+        returnPickedCards();
+        return toReturn;
     }
 
     public void returnPickedCards(){ pickedCards.clear(); };
 
     public HandPosition hasCardOfType(CardType type){
         for(int i = 0; i < handCards.size(); i++){
-            if(handCards.get(i).getType() == type) return new HandPosition(player.playerIndex, i );
+            if(handCards.get(i).getType() == type) return new HandPosition(playerIndex, i );
         }
         return null;
     }
 
     public List<Card> getCards(){ return handCards;}
+    public List<Card> getPickedCards() { return pickedCards; }
 }

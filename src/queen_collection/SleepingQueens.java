@@ -4,9 +4,7 @@ import cards.Queen;
 import position.Position;
 import position.SleepingQueenPosition;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class SleepingQueens extends QueenCollection {
     private Map<Position,Queen> queens;
@@ -29,7 +27,7 @@ public class SleepingQueens extends QueenCollection {
         for(int i = 0; i < indexes.size(); i++){
             queens.put(new SleepingQueenPosition(i),indexes.get(i));
         }
-        System.out.println(queens);
+
     }
 
     @Override
@@ -45,8 +43,12 @@ public class SleepingQueens extends QueenCollection {
     @Override
     public Optional<Queen>
     removeQueen(Position position) {
-        return Optional.ofNullable(queens.remove(position));
+        int indx = position.getCardIndex();
+        Optional<Queen> removedQueen = Optional.ofNullable(queens.remove(indx));
+        for(Map.Entry<Position, Queen> queen : queens.entrySet()){
+            if (queen.getKey().getCardIndex() > indx) queen.getKey().setCardIndex(queen.getKey().getCardIndex() - 1);
+        }
+        return removedQueen;
     }
 
-    // kinda looking wrong
 }

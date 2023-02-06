@@ -2,7 +2,6 @@ package queen_collection;
 
 import cards.Queen;
 import position.Position;
-import position.SleepingQueenPosition;
 
 import java.util.Map;
 import java.util.Optional;

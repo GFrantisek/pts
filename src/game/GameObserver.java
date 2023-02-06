@@ -1,5 +1,5 @@
 package game;
 
 public interface GameObserver {
-    String notify(String message);
+    void notify(String message);
 }

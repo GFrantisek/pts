@@ -14,9 +14,17 @@ public class HandPosition implements Position {
     public int getPlayerIndex(){
         return player;
     }
-    @Override
+
     public int getCardIndex() {
         return cardIndex;
+    }
+
+    public void setPlayerIndex(int player){
+        this.player = player;
+    }
+    @Override
+    public void setCardIndex(int cardIndex) {
+        this.cardIndex = cardIndex;
     }
 
     @Override

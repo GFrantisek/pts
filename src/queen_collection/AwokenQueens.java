@@ -4,18 +4,16 @@ import cards.Queen;
 import player.Player;
 import position.AwokenQueenPosition;
 import position.Position;
-import position.SleepingQueenPosition;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class AwokenQueens extends QueenCollection{
     private Map<Position,Queen> queens;
-    private final Player player;
+    private final int player;
 
-    AwokenQueens(Player player) {
+    public AwokenQueens(int player) {
         queens = new HashMap<>();
         this.player = player;
     }
@@ -27,12 +25,22 @@ public class AwokenQueens extends QueenCollection{
 
     @Override
     public void addQueen(Queen Queen) {
-        queens.put(new AwokenQueenPosition(queens.size(), player.playerIndex),Queen);
+        queens.put(new AwokenQueenPosition(queens.size(), player),Queen);
     }
 
     @Override
     public Optional<Queen> removeQueen(Position position) {
-        return Optional.ofNullable(queens.remove(position));
+        Optional<Queen> removedQueen = Optional.ofNullable(queens.remove(position));
+        int removedCardIndex = position.getCardIndex();
+        Map<Position, Queen> map = new HashMap<>();
+        for (Map.Entry<Position, Queen> entry : queens.entrySet()) {
+            if (entry.getKey().getCardIndex() > removedCardIndex) {
+                entry.getKey().setCardIndex(entry.getKey().getCardIndex() - 1);
+            }
+            map.put(entry.getKey(), entry.getValue());
+        }
+        this.queens = map;
+        return removedQueen;
     }
 
 }

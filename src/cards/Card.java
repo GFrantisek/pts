@@ -1,9 +1,7 @@
 package cards;
 
-import cards.CardType;
-
 public class Card {
-    private final CardType type;
+    public final CardType type;
     private final int value;
 
     public Card(CardType type, int value) {
@@ -11,6 +9,7 @@ public class Card {
         this.value = value;
     }
 
+    //in case of need
     public int getValue() {
         return value;
     }

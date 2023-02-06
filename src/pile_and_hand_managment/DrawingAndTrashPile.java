@@ -6,95 +6,90 @@ import cards.CardType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class DrawingAndTrashPile {
-    List<Card> allCards;
-    List<Card> trashPile;
-    List<Card> drawingPile;
-    List<Card> discardedThisTurn;
-    int cardsPerPlayer;
 
-    public DrawingAndTrashPile() {
-        this.drawingPile = new ArrayList<>();
-        this.allCards = new ArrayList<>();
-        this.discardedThisTurn = new ArrayList<>();
-        this.cardsPerPlayer = 5;
-        for(int i = 1; i <= 10; i++){
-            for(int j = 0; j < 4; j++){
-                drawingPile.add(new Card(CardType.Number, i));
-            }
-        }
-        for (int i = 0; i < 8; i++){
-            drawingPile.add(new Card(CardType.King, 0));
-        }
-        for(int i = 0; i < 4; i++){
-            drawingPile.add(new Card(CardType.Knight, 0));
-            drawingPile.add(new Card(CardType.SleepingPotion, 0));
-        }
-        for(int i = 0; i < 3; i++){
-            drawingPile.add(new Card(CardType.Dragon, 0));
-            drawingPile.add(new Card(CardType.MagicWand, 0));
-        }
-        allCards.addAll(drawingPile);
+    private List<Card> trashPile;
+    private List<Card> drawingPile;
+    private List<Card> discardedThisTurn;
+    private ShuffleStrategy shuffleStrategy;
 
-        Collections.shuffle(drawingPile);
-        for (int i = 0; i < 3; i++) {
-            System.out.println(allCards.get(i).getType());
-        }
-        for(int i = 0; i < 10; i++){
-            System.out.print(drawingPile.get(i).getValue() + " ");
-        }
-        System.out.println();
-        trashPile = new ArrayList<>();
+   public DrawingAndTrashPile() {
+       drawingPile = new ArrayList<>();
+       shuffleStrategy = new ShuffleNotEnough();
+       trashPile = new ArrayList<>();
+       discardedThisTurn = new ArrayList<>();
+
+       for(int i = 1; i <= 4; i++){
+           for(int j = 0; j <= 10; j++){
+               drawingPile.add(new Card(CardType.Number, j));
+           }
+       }
+       for (int i = 0; i < 8; i++){
+           drawingPile.add(new Card(CardType.King, 0));
+       }
+       for(int i = 0; i < 4; i++){
+           drawingPile.add(new Card(CardType.Knight, 0));
+           drawingPile.add(new Card(CardType.SleepingPotion, 0));
+       }
+       for(int i = 0; i < 3; i++){
+           drawingPile.add(new Card(CardType.Dragon, 0));
+           drawingPile.add(new Card(CardType.MagicWand, 0));
+       }
+
+       Collections.shuffle(drawingPile, new Random());
+   }
+   public List<Card> discardAndDraw(List<Card> discard){
+
+       discardedThisTurn = new ArrayList<>();
+       discardedThisTurn.addAll(discard);
+       List<Card> newDraw;
+
+       if(drawingPile.size() < discard.size()){
+            newDraw = shuffleStrategy.shuffle(this.drawingPile,this.trashPile, discard);
+            this.trashPile = shuffleStrategy.getTrashPile();
+            this.drawingPile = shuffleStrategy.getDrawingPile();
+
+       }else{
+           trashPile.addAll(discard);
+           newDraw = new ArrayList<Card>();
+
+           for(int i = 0; i < discard.size(); i++) {
+               newDraw.add(drawingPile.get(drawingPile.size() - 1));
+               drawingPile.remove(drawingPile.size() - 1);
+           }
+       }
+
+       return newDraw;
+   }
+
+   public void newTurn() {
+       discardedThisTurn.clear();
+   }
+
+   public  List<Card> getCardsDiscardedThisTurn(){
+     return discardedThisTurn;
+   }
+
+   public List<Card> getDrawingPile() {
+       return this.drawingPile;
+   }
+
+   public List<Card> drawFullHandOf5Cards() {
+       List<Card> hand = new ArrayList<>();
+       for (int i = 0; i <= 4; i++){
+           hand.add(drawingPile.get(drawingPile.size() - 1));
+           drawingPile.remove(drawingPile.size() - 1);
+       }
+       return hand;
+   }
+
+    public boolean isEmpty() {
+       return this.drawingPile.isEmpty();
     }
 
-    public List<Card> frstDraw(){
-        //neriesim keby hra vela hracov a nemame dostatok kariet
-
-        List<Card> ret = new ArrayList<>();
-        for(int i = 0; i < cardsPerPlayer; i++){
-                ret.add(drawingPile.get(0));
-            drawingPile.remove(0);
-        }
-
-        return ret;
-    }
-
-    void reShuffle(){
-        drawingPile = new ArrayList<>();
-        drawingPile.addAll(allCards);
-        Collections.shuffle(drawingPile);
-        discardedThisTurn = new ArrayList<>();
-        trashPile = new ArrayList<>();
-    }
-
-    public List<Card> discardAndDraw(List<Card> discard){
-        List<Card> ret = new ArrayList<>();
-
-        if(discard.size()>drawingPile.size()) {
-            // nie velmi pekna metoda na reshuffle
-            reShuffle();
-        }
-        trashPile.addAll(discard);
-        discardedThisTurn.addAll(discard);
-        if(discard != null){
-            trashPile.addAll(discard);
-            discardedThisTurn.addAll(discard);
-
-            for(int i = 0; i <discard.size(); i++){
-                if(drawingPile.size() == 0) reShuffle();
-                ret.add(drawingPile.get(0));
-                drawingPile.remove(0);
-            }
-        }
-        return ret;
-    }
-
-    void newTurn(){
-        discardedThisTurn = null;
-    }
-
-    List<Card> getCardsDiscardedThisTurn(){
-        return discardedThisTurn;
+    public int size() {
+       return this.drawingPile.size();
     }
 }

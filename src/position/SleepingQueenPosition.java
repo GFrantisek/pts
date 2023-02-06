@@ -14,6 +14,10 @@ public class SleepingQueenPosition implements Position {
         return cardIndex;
     }
 
+    public void setCardIndex(int cardIndex){
+        this.cardIndex = cardIndex;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(cardIndex);

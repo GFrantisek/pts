@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class AwokenQueenPosition implements Position {
     private final int player;
-    private final int cardIndex;
+    private int cardIndex;
 
     public AwokenQueenPosition(int player, int cardIndex){
         this.player = player;
@@ -18,6 +18,11 @@ public class AwokenQueenPosition implements Position {
     @Override
     public int getCardIndex() {
         return cardIndex;
+    }
+
+    @Override
+    public void setCardIndex(int cardIndex) {
+        this.cardIndex = cardIndex;
     }
 
     @Override
